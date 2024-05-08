@@ -102,11 +102,82 @@ Q.10.5.2.f: Write regex for all strings of lower-case letters that are in sorted
 
 - Let lower-case letters be composed of `{a,b,c,d}`.
 - Then `R = a*a | a*b*b | a*b*c*c | a*b*c*d*d`
+  - or `a*(a|b*(b|c*(c|d*d)))`
 
 ```bash
-$ egrep '^(a*a|a*b*b|a*b*c*c|a*b*c*d*d)$' abcd.txt | awk '{printf "%s, ", $0}END{print ""}'
+$ egrep '^(a*(a|b*(b|c*(c|d*d))))$' abcd.txt | awk '{printf "%s, ", $0}END{print ""}'
 a, b, c, d, aa, ab, ac, ad, bb, bc, bd, cc, cd, dd, aaa, aab, aac, aad, abb, abc, abd, acc, acd, add, bbb, bbc, bbd, bcc, bcd, bdd, ccc, ccd, cdd, ddd, aaaa, aaab, aaac, aaad, aabb, aabc, aabd, aacc, aacd, aadd, abbb, abbc, abbd, abcc, abcd, abdd, accc, accd, acdd, addd, bbbb, bbbc, bbbd, bbcc, bbcd, bbdd, bccc, bccd, bcdd, bddd, cccc, cccd, ccdd, cddd, dddd, 
 ```
 
+Q.10.5.3.a: Write regex for all strings of `a`'s and `b`'s such that all runs of `a`'s are of even length.
 
+- `R = (aa)*b*`
 
+<table>
+<tr>
+<th><th>ε<th>b<th>bb
+<tr>
+<th>ε<td>ε<td>b<td>bb
+<tr>
+<th>A=aa<td>A<td>Ab<td>Abb
+<tr>
+<th>AA=aaaa<td>AA<td>AAb<td>AAbb
+</table>
+
+- `R = ((aa)*b*)*`
+
+<table>
+<tr>
+<th><th>ε<th>b<th>bb<th>A<th>Ab<th>Abb<th>AA<th>AAb<th>AAbb
+<tr>
+<th>ε<td>ε<td>b<td>bb<td>A<td>Ab<td>Abb<td>AA<td>AAb<td>AAbb
+<tr>
+<th>b<td>b<td>bb<td>bbbb<td>bA<td>bAb<td>bAbb<td>bAA<td>bAAb<td>bAAbb
+<tr>
+<th>bb<td>bb<td>bbb<td>bbbb<td>bbA<td>bbAb<td>bbAbb<td>bbAA<td>bbAAb<td>bbAAbb
+<tr>
+<th>A<td>A<td>Ab<td>Abb<td>AA<td>AAb<td>AAbb<td>AAA<td>AAAb<td>AAAbb
+<tr>
+<th>Ab<td>Ab<td>Abb<td>Abbb<td>AbA<td>AbAb<td>AbAbb<td>AbAA<td>AbAAb<td>AbAAbb
+<tr>
+<th>Abb<td>Abb<td>Abbb<td>Abbbb<td>AbbA<td>AbbAb<td>AbbAbb<td>AbbAA<td>AbbAAb<td>AbbAAbb
+<tr>
+<th>AA<td>AA<td>AAb<td>AAbb<td>AAA<td>AAAb<td>AAAbb<td>AAAA<td>AAAAb<td>AAAAbb
+<tr>
+<th>AAb<td>AAb<td>AAbb<td>AAbbb<td>AAbA<td>AAbAb<td>AAbAbb<td>AAbAA<td>AAbAAb<td>AAbAAbb
+<tr>
+<th>AAbb<td>AAbb<td>AAbbb<td>AAbbbb<td>AAbbA<td>AAbbAb<td>AAbbAbb<td>AAbbAA<td>AAbbAAb<td>AAbbAAbb
+</table>
+
+```bash
+$ cat ab.txt
+
+bbbaabaaaa
+aaaabb
+abbabaa
+aaa
+
+$ egrep '^(((aa)*b*)*)$' ab.txt
+
+bbbaabaaaa
+aaaabb
+```
+
+Q.10.5.3.b: Write regex for strings that represent numbers of type `float` in C.
+
+| | syntax
+|-|--------
+| a whole number    | *digits+* *exponent*
+| a fraction number | [*digits?*] `.` [*digits?*] [*exponent*]
+
+where
+- *digits?* := `[0-9]*`
+- *digits+* := `[0-9]*[0-9]`
+- *exponent* := `e(ε|+|-)[0-9]*[0-9]`
+
+`R` for numbers of type `float`:
+- `= ([0-9]*[0-9])e(ε|+|-)[0-9]*[0-9]`
+- `| (([0-9]*).([0-9]*)(ε|e(ε|+|-)[0-9]*[0-9]))`
+
+The language includes:
+- 0
