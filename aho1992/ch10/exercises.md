@@ -2,7 +2,9 @@
 
 ## §10.5 Regular Expressions
 
-Q.10.5.1: In Example 10.13 we considered the regular expression `(a|ab)(c|bc)`,
+### Q.10.5.1
+
+In Example 10.13 we considered the regular expression `(a|ab)(c|bc)`,
 and saw that its language consisted of the three strings `ac`, `abc`, and `abbc`, that is, an `a` and a `c`, separated by from zero to two `b`’s. Write two other regular expressions that define the same language.
 
 - `ac|abc|abbc`
@@ -10,12 +12,16 @@ and saw that its language consisted of the three strings `ac`, `abc`, and `abbc`
 - `a(c|bc|bbc)`
 - `a(c|b(c|bc))`
 
-Q.10.5.2.a: Write regex `R` for `L(R) = {=,<=,<,>=,>,!=}`.
+### Q.10.5.2.a
+
+Write regex `R` for `L(R) = {=,<=,<,>=,>,!=}`.
 
 - `= | != | <= | >= | < | >` &equiv; `(ε|!)= | (<|>)(=|ε)`
 - `= | != | <= | >= | < | >` &equiv; `= | (!|<|>)= | <|>`
 
-Q.10.5.2.b: Write regex for all strings of `0`s and `1`s that end in `0`.
+### Q.10.5.2.b
+
+Write regex for all strings of `0`s and `1`s that end in `0`.
 
 - L(R) includes
   - `0`, `00`, `10`, `000`, `010`, `100`, `110`, and so on
@@ -27,7 +33,9 @@ $ egrep '^((0|1)*)0$' 01.txt | awk '{printf "%s, ", $0}END{print ""}'
 0, 00, 10, 000, 010, 100, 110, 0000, 0010, 0100, 0110, 1000, 1010, 1100, 1110, 00000, 
 ```
 
-Q.10.5.2.c: Write regex for all strings of `0`s and `1`s with at least one `1`.
+### Q.10.5.2.c
+
+Write regex for all strings of `0`s and `1`s with at least one `1`.
 
 - L(R) includes
   - ~~`0`~~, `1`
@@ -56,7 +64,9 @@ $ egrep '^((0|1)*)1((0|1)*)$' 01.txt | awk '{printf "%s, ", $0}END{print ""}'
 1, 01, 10, 11, 001, 010, 011, 100, 101, 110, 111, 0001, 0010, 0011, 0100, 0101, 0110, 0111, 1000, 1001, 1010, 1011, 1100, 1101, 1110, 1111, 
 ```
 
-Q.10.5.2.d: Write regex for all strings of `0`s and `1`s with at most one `1`.
+### Q.10.5.2.d
+
+Write regex for all strings of `0`s and `1`s with at most one `1`.
 
 - L(R) includes
   - `0`, `1`
@@ -83,7 +93,9 @@ $ egrep '^(0*)(0|1)(0*)$' 01.txt | awk '{printf "%s, ", $0}END{print ""}'
 0, 1, 00, 01, 10, 000, 001, 010, 100, 0000, 0001, 0010, 0100, 1000, 00000, 
 ```
 
-Q.10.5.2.e: Write regex for all strings of `0`s and `1`s such that the third position from the right end is 1.
+### Q.10.5.2.e
+
+Write regex for all strings of `0`s and `1`s such that the third position from the right end is 1.
 
 - L(R) includes
   - ~~`000`, `001`, `010`, `011`~~, `100`, `101`, `110`, `111`
@@ -98,7 +110,9 @@ $ egrep '^((0|1)*)1(0|1)(0|1)$' 01.txt | awk '{printf "%s, ", $0}END{print ""}'
 100, 101, 110, 111, 0100, 0101, 0110, 0111, 1100, 1101, 1110, 1111, 
 ```
 
-Q.10.5.2.f: Write regex for all strings of lower-case letters that are in sorted order.
+### Q.10.5.2.f
+
+Write regex for all strings of lower-case letters that are in sorted order.
 
 - Let lower-case letters be composed of `{a,b,c,d}`.
 - Then `R = a*a | a*b*b | a*b*c*c | a*b*c*d*d`
@@ -109,7 +123,9 @@ $ egrep '^(a*(a|b*(b|c*(c|d*d))))$' abcd.txt | awk '{printf "%s, ", $0}END{print
 a, b, c, d, aa, ab, ac, ad, bb, bc, bd, cc, cd, dd, aaa, aab, aac, aad, abb, abc, abd, acc, acd, add, bbb, bbc, bbd, bcc, bcd, bdd, ccc, ccd, cdd, ddd, aaaa, aaab, aaac, aaad, aabb, aabc, aabd, aacc, aacd, aadd, abbb, abbc, abbd, abcc, abcd, abdd, accc, accd, acdd, addd, bbbb, bbbc, bbbd, bbcc, bbcd, bbdd, bccc, bccd, bcdd, bddd, cccc, cccd, ccdd, cddd, dddd, 
 ```
 
-Q.10.5.3.a: Write regex for all strings of `a`'s and `b`'s such that all runs of `a`'s are of even length.
+### Q.10.5.3.a
+
+Write regex for all strings of `a`'s and `b`'s such that all runs of `a`'s are of even length.
 
 - `R = (aa)*b*`
 
@@ -163,21 +179,83 @@ bbbaabaaaa
 aaaabb
 ```
 
-Q.10.5.3.b: Write regex for strings that represent numbers of type `float` in C.
+### Q.10.5.3.b
 
-| | syntax
-|-|--------
-| a whole number    | *digits+* *exponent*
-| a fraction number | [*digits?*] `.` [*digits?*] [*exponent*]
+Write regex for strings that represent numbers of type `float` in C++. The syntax of [floating-point literal](https://en.cppreference.com/w/cpp/language/floating_literal) is as follows; where `(?)` denotes optional:
 
-where
-- *digits?* := `[0-9]*`
-- *digits+* := `[0-9]*[0-9]`
-- *exponent* := `e(ε|+|-)[0-9]*[0-9]`
-
-`R` for numbers of type `float`:
-- `= ([0-9]*[0-9])e(ε|+|-)[0-9]*[0-9]`
-- `| (([0-9]*).([0-9]*)(ε|e(ε|+|-)[0-9]*[0-9]))`
+- sign(?) digits exponent
+- sign(?) digits . exponent(?)
+- sign(?) digits(?) . digits exponent(?)
 
 The language includes:
-- 0
+
+| syntax | literal
+|--------|---------
+| sign(?) digits exponent                 | 1e1
+| sign(?) digits . exponent(?)            | +1., -2.e0
+| sign(?) digits(?) . digits exponent(?)  | +.2, -0.2, -.2E+3, 0.2e-3
+
+Let
+
+- sign(?) := `[-+]?`
+- digits := `[0-9]*[0-9]`
+- digits(?) := `[0-9]*`
+- exponent := `[eE][-+]?[0-9]*[0-9]`
+- exponent(?) := `([eE][-+]?[0-9]*[0-9])?`
+
+then the regex `R`
+
+- `= [-+]?[0-9]*[0-9][eE][-+]?[0-9]*[0-9]`
+- `| [-+]?[0-9]*[0-9]\.([eE][-+]?[0-9]*[0-9])?`
+- `| [-+]?[0-9]*\.[0-9]*[0-9]([eE][-+]?[0-9]*[0-9])?`
+
+The regex works as shown below:
+
+```bash
+$ cat float.txt
+
+0
+1e1
++1.
+-2.e0
++.2
+-0.2
+-.2E+3
+0.2e-3
+
+$ egrep '^[-+]?[0-9]*[0-9][eE][-+]?[0-9]*[0-9]$' float.txt
+1e1
+
+$ egrep '^[-+]?[0-9]*[0-9]\.([eE][-+]?[0-9]*[0-9])?$' float.txt
++1.
+-2.e0
+
+$ egrep '^[-+]?[0-9]*\.[0-9]*[0-9]([eE][-+]?[0-9]*[0-9])?$' float.txt
++.2
+-0.2
+-.2E+3
+0.2e-3
+```
+
+For your reference, the following code compiles with C++20:
+
+```c++
+#include <type_traits> 
+
+int main()
+{
+  // 0 is int
+  static_assert(std::is_floating_point_v<decltype(0)> == false);
+  // sign(?) digits exponent : 1e1
+  static_assert(std::is_floating_point_v<decltype(1e1)>);
+  // sign(?) digits . exponent(?) : +1., -2.e0
+  static_assert(std::is_floating_point_v<decltype(+1.)>);
+  static_assert(std::is_floating_point_v<decltype(-2.e0)>);
+  // sign(?) digits(?) . digits exponent(?) : +.2, -0.2, -.2E+3, 0.2e-3
+  static_assert(std::is_floating_point_v<decltype(+.2)>);
+  static_assert(std::is_floating_point_v<decltype(-0.2)>);
+  static_assert(std::is_floating_point_v<decltype(-.2E+3)>);
+  static_assert(std::is_floating_point_v<decltype(0.2e-3)>);
+  return 0;
+}
+```
