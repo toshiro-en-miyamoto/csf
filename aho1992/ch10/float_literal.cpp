@@ -1,6 +1,7 @@
+// float_literal.cpp
 #include <type_traits> 
 
-int main()
+void float_literal()
 {
   // 0 is int
   static_assert(std::is_floating_point_v<decltype(0)> == false);
@@ -14,5 +15,4 @@ int main()
   static_assert(std::is_floating_point_v<decltype(-0.2)>);
   static_assert(std::is_floating_point_v<decltype(-.2E+3)>);
   static_assert(std::is_floating_point_v<decltype(0.2e-3)>);
-  return 0;
 }

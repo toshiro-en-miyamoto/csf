@@ -23,91 +23,106 @@ Write regex `R` for `L(R) = {=,<=,<,>=,>,!=}`.
 
 Write regex for all strings of `0`s and `1`s that end in `0`.
 
-- L(R) includes
-  - `0`, `00`, `10`, `000`, `010`, `100`, `110`, and so on
-  - `R` seems to be `(ε|(0|1)|(00|01|10|11)|...)0`
-- thus, `R = ((0|1)*)0`
+For strings of 3 digits or less, L(R) should
+
+- include: 0, 00, 10, 000, 010, 100, 110
+- exclude: ε, 1, 01, 11, 001, 011, 101, 111
+
+Answer: `(0|1)*0`
+
+| `(0\|1)*`     | `(0\|1)*0`
+|---------------|------------
+| ε             | {0}
+| (0\|1)        | {00, 10}
+| (0\|1)(0\|1)  | {000, 010, 100, 110}
 
 ```bash
-$ egrep '^((0|1)*)0$' 01.txt | awk '{printf "%s, ", $0}END{print ""}'
-0, 00, 10, 000, 010, 100, 110, 0000, 0010, 0100, 0110, 1000, 1010, 1100, 1110, 00000, 
+$ cat Q.10.5.2.b.txt | awk '{printf "%s, ", $0}'
+, 0, 1, 00, 01, 10, 11, 000, 001, 010, 011, 100, 101, 110, 111,
+
+$ egrep '^(0|1)*0$' Q.10.5.2.b.txt | awk '{printf "%s, ", $0}'
+0, 00, 10, 000, 010, 100, 110,
 ```
 
 ### Q.10.5.2.c
 
 Write regex for all strings of `0`s and `1`s with at least one `1`.
 
-- L(R) includes
-  - ~~`0`~~, `1`
-  - ~~`00`~~, `01`, `10`, `11`
-  - ~~`000`~~, `001`, `010`, `011`, `100`, `101`, `110`, `111`
-  - ~~`0000`~~, `0001`, `0010`, `0011`, `0100`, `0101`, `0110`, `0111`
-  - `1000`, `1001`, `1010`, `1011`, `1100`, `1101`, `1110`, `1111`, and so on
-- likely `R = ((0|1)*)1((0|1)*)`
-  - `L(ε1ε) = {1}`
-  - `L((0|1)1ε) = {01,11}`
-  - `L(ε1(0|1)) = {10,11}`
-  - `L((0|1)(0|1)1ε) = {001,011,101,111}`
-  - `L((0|1)1(0|1)) = {010,011,110,111}`
-  - `L(ε1(0|1)(0|1)) = {100,101,110,111}`
-  - `L((0|1)(0|1)(0|1)1ε) = {0001,0011,0101,0111,1001,1011,1101,1111}`
-  - `L((0|1)(0|1)1(0|1)) = {0010,0011,0110,0111,1010,1011,1110,1111}`
-  - `L((0|1)1(0|1)(0|1)) = {0100,1100,0101,1101,0110,1110,0111,1111}`
-  - `L(ε1(0|1)(0|1)(0|1)) = {1000,1001,1010,1011,1100,1101,1110,1111}`
-- thus `L(((0|1)*)1((0|1)*)) =`
-  - `{1,01,10,11,001,010,011,100,101,110,111}` &cup;
-  - `{0001,0010,0011,0100,0101,0110,0111}` &cup;
-  - `{1000,1001,1010,1011,1100,1101,1110,1111}` and so on
+For strings of 3 digits or less, L(R) should
+
+- include: 1, 01, 10, 11, 001, 010, 011, 100, 101, 110, 111
+- exclude: ε, 0, 00, 000
+
+Answer: `(0|1)*1(0|1)*`
+
+| `(0\|1)*`     | 1 | `(0\|1)*`     | `(0\|1)*1(0\|1)*`
+|---------------|---|---------------|-------------------
+| ε             | 1 | ε             | {1}
+| (0\|1)        | 1 | ε             | {01, 11}
+| ε             | 1 | (0\|1)        | {10, 11}
+| (0\|1)(0\|1)  | 1 | ε             | {001, 011, 101, 111}
+| (0\|1)        | 1 | (0\|1)        | {010, 011, 110, 111}
+| ε             | 1 | (0\|1)(0\|1)  | {100, 101, 110, 111}
 
 ```bash
-$ egrep '^((0|1)*)1((0|1)*)$' 01.txt | awk '{printf "%s, ", $0}END{print ""}'
-1, 01, 10, 11, 001, 010, 011, 100, 101, 110, 111, 0001, 0010, 0011, 0100, 0101, 0110, 0111, 1000, 1001, 1010, 1011, 1100, 1101, 1110, 1111, 
+$ cat Q.10.5.2.b.txt | awk '{printf "%s, ", $0}'
+, 0, 1, 00, 01, 10, 11, 000, 001, 010, 011, 100, 101, 110, 111,
+
+$ egrep '^(0|1)*1(0|1)*$' Q.10.5.2.b.txt | awk '{printf "%s, ", $0}'
+1, 01, 10, 11, 001, 010, 011, 100, 101, 110, 111,
 ```
 
 ### Q.10.5.2.d
 
 Write regex for all strings of `0`s and `1`s with at most one `1`.
 
-- L(R) includes
-  - `0`, `1`
-  - `00`, `01`, `10`, ~~`11`~~
-  - `000`, `001`, `010`, ~~`011`~~, `100`, ~~`101`, `110`, `111`~~
-  - `0000`, `0001`, `0010`, ~~`0011`~~, `0100`, ~~`0101`, `0110`, `0111`~~
-  - `1000`, ~~`1001`, `1010`, `1011`, `1100`, `1101`, `1110`, `1111`~~, and so on
-- likely `R = (0*)(0|1)(0*)`
-  - `L(ε(0|1)ε) = {0,1}`
-  - `L(0(0|1)ε) = {00,01}`
-  - `L(ε(0|1)0) = {00,10}`
-  - `L(00(0|1)ε) = {000,001}`
-  - `L(0(0|1)0) = {000,010}`
-  - `L(ε(0|1)00) = {000,100}`
-  - `L(000(0|1)ε) = {0000,0001}`
-  - `L(00(0|1)0) = {0000,0010}`
-  - `L(0(0|1)00) = {0000,0100}`
-  - `L(ε(0|1)000) = {0000,1000}`
-- thus `L((0*)(0|1)(0*)) =`
-  - `{0,1,00,01,10,000,001,010,100,0000,0001,0010,0100,1000}` and so on
+For strings of 3 digits or less, L(R) should
+
+- include: 0, 1, 00, 01, 10, 000, 001, 010, 100
+- exclude: ε, 11, 011, 101, 110, 111
+
+Answer: `0*(0|1)0*`
+
+| `0*`  | `0\|1`  | `0*`  | `0*(0\|1)0*`
+|-------|---------|-------|----------
+| ε     | {0, 1}  | ε     | {0, 1}
+| 0     | {0, 1}  | ε     | {00, 01}
+| ε     | {0, 1}  | 0     | {00, 10}
+| 00    | {0, 1}  | ε     | {000, 001}
+| 0     | {0, 1}  | 0     | {000, 010}
+| ε     | {0, 1}  | 00    | {000, 100}
 
 ```bash
-$ egrep '^(0*)(0|1)(0*)$' 01.txt | awk '{printf "%s, ", $0}END{print ""}'
-0, 1, 00, 01, 10, 000, 001, 010, 100, 0000, 0001, 0010, 0100, 1000, 00000, 
+$ cat Q.10.5.2.b.txt | awk '{printf "%s, ", $0}'
+, 0, 1, 00, 01, 10, 11, 000, 001, 010, 011, 100, 101, 110, 111,
+
+$ egrep '^0*(0|1)0*$' Q.10.5.2.b.txt | awk '{printf "%s, ", $0}'
+0, 1, 00, 01, 10, 000, 001, 010, 100,
 ```
 
 ### Q.10.5.2.e
 
 Write regex for all strings of `0`s and `1`s such that the third position from the right end is 1.
 
-- L(R) includes
-  - ~~`000`, `001`, `010`, `011`~~, `100`, `101`, `110`, `111`
-  - ~~`0000`, `0001`, `0010`, `0011`~~, `0100`, `0101`, `0110`, `0111`
-  - ~~`1000`, `1001`, `1010`, `1011`~~, `1100`, `1101`, `1110`, `1111`
-- likely `R = ((0|1)*)1(0|1)(0|1)`
-  - `L(ε1(0|1)(0|1)) = {100,101,110,111}`
-  - `L((0|1)1(0|1)(0|1)) = {0100,0101,0110,0111,1100,1101,1110,1111}`
+For strings of 4 digits or less, L(R) should
+
+- include: 100, 101, 110, 111, 0100, 0101, 0110, 0111, 1100, 1101, 1110, 1111
+- exclude: ε, 0, 1, 00, 01, 10, 11, 000, 001, 010, 011, 0000, 0001, 0010, 0011, 1000, 1001, 1010, 1011
+
+Answer: `(0|1)*1(0|1)(0|1)`
+
+| `(0\|1)*` | 1 | `(0\|1)(0\|1)`    | `(0\|1)*1(0\|1)(0\|1)`
+|-----------|---|-------------------|------------------------
+| ε         | 1 | {00, 01, 10, 11}  | {100, 101, 110, 111}
+| 0         | 1 | {00, 01, 10, 11}  | {0100, 0101, 0110, 0111}
+| 1         | 1 | {00, 01, 10, 11}  | {1100, 1101, 1110, 1111}
 
 ```bash
-$ egrep '^((0|1)*)1(0|1)(0|1)$' 01.txt | awk '{printf "%s, ", $0}END{print ""}'
-100, 101, 110, 111, 0100, 0101, 0110, 0111, 1100, 1101, 1110, 1111, 
+$ cat Q.10.5.2.e.txt | awk '{printf "%s, ", $0}'
+, 0, 1, 00, 01, 10, 11, 000, 001, 010, 011, 100, 101, 110, 111, 0000, 0001, 0010, 0011, 0100, 0101, 0110, 0111, 1000, 1001, 1010, 1011, 1100, 1101, 1110, 1111,
+
+$ egrep '^(0|1)*1(0|1)(0|1)$' Q.10.5.2.e.txt | awk '{printf "%s, ", $0}'
+100, 101, 110, 111, 0100, 0101, 0110, 0111, 1100, 1101, 1110, 1111,
 ```
 
 ### Q.10.5.2.f
@@ -119,62 +134,43 @@ Write regex for all strings of lower-case letters that are in sorted order.
   - or `a*(a|b*(b|c*(c|d*d)))`
 
 ```bash
-$ egrep '^(a*(a|b*(b|c*(c|d*d))))$' abcd.txt | awk '{printf "%s, ", $0}END{print ""}'
-a, b, c, d, aa, ab, ac, ad, bb, bc, bd, cc, cd, dd, aaa, aab, aac, aad, abb, abc, abd, acc, acd, add, bbb, bbc, bbd, bcc, bcd, bdd, ccc, ccd, cdd, ddd, aaaa, aaab, aaac, aaad, aabb, aabc, aabd, aacc, aacd, aadd, abbb, abbc, abbd, abcc, abcd, abdd, accc, accd, acdd, addd, bbbb, bbbc, bbbd, bbcc, bbcd, bbdd, bccc, bccd, bcdd, bddd, cccc, cccd, ccdd, cddd, dddd, 
+$ cat Q.10.5.2.f.txt | awk '{printf "%s, ", $0}'
+, a, b, c, d, aa, ab, ac, ad, ba, bb, bc, bd, ca, cb, cc, cd, da, db, dc, dd, aaa, aab, aac, aad, aba, abb, abc, abd, aca, acb, acc, acd, ada, adb, adc, add, baa, bab, bac, bad, bba, bbb, bbc, bbd, bca, bcb, bcc, bcd, bda, bdb, bdc, bdd, caa, cab, cac, cad, cba, cbb, cbc, cbd, cca, ccb, ccc, ccd, cda, cdb, cdc, cdd, daa, dab, dac, dad, dba, dbb, dbc, dbd, dca, dcb, dcc, dcd, dda, ddb, ddc, ddd, aaaa, aaab, aaac, aaad, aaba, aabb, aabc, aabd, aaca, aacb, aacc, aacd, aada, aadb, aadc, aadd, abaa, abab, abac, abad, abba, abbb, abbc, abbd, abca, abcb, abcc, abcd, abda, abdb, abdc, abdd, acaa, acab, acac, acad, acba, acbb, acbc, acbd, acca, accb, accc, accd, acda, acdb, acdc, acdd, adaa, adab, adac, adad, adba, adbb, adbc, adbd, adca, adcb, adcc, adcd, adda, addb, addc, addd, baaa, baab, baac, baad, baba, babb, babc, babd, baca, bacb, bacc, bacd, bada, badb, badc, badd, bbaa, bbab, bbac, bbad, bbba, bbbb, bbbc, bbbd, bbca, bbcb, bbcc, bbcd, bbda, bbdb, bbdc, bbdd, bcaa, bcab, bcac, bcad, bcba, bcbb, bcbc, bcbd, bcca, bccb, bccc, bccd, bcda, bcdb, bcdc, bcdd, bdaa, bdab, bdac, bdad, bdba, bdbb, bdbc, bdbd, bdca, bdcb, bdcc, bdcd, bdda, bddb, bddc, bddd, caaa, caab, caac, caad, caba, cabb, cabc, cabd, caca, cacb, cacc, cacd, cada, cadb, cadc, cadd, cbaa, cbab, cbac, cbad, cbba, cbbb, cbbc, cbbd, cbca, cbcb, cbcc, cbcd, cbda, cbdb, cbdc, cbdd, ccaa, ccab, ccac, ccad, ccba, ccbb, ccbc, ccbd, ccca, cccb, cccc, cccd, ccda, ccdb, ccdc, ccdd, cdaa, cdab, cdac, cdad, cdba, cdbb, cdbc, cdbd, cdca, cdcb, cdcc, cdcd, cdda, cddb, cddc, cddd, daaa, daab, daac, daad, daba, dabb, dabc, dabd, daca, dacb, dacc, dacd, dada, dadb, dadc, dadd, dbaa, dbab, dbac, dbad, dbba, dbbb, dbbc, dbbd, dbca, dbcb, dbcc, dbcd, dbda, dbdb, dbdc, dbdd, dcaa, dcab, dcac, dcad, dcba, dcbb, dcbc, dcbd, dcca, dccb, dccc, dccd, dcda, dcdb, dcdc, dcdd, ddaa, ddab, ddac, ddad, ddba, ddbb, ddbc, ddbd, ddca, ddcb, ddcc, ddcd, ddda, dddb, dddc, dddd,
+
+$ egrep '^a*(a|b*(b|c*(c|d*d)))$' Q.10.5.2.f.txt | awk '{printf "%s, ", $0}'
+a, b, c, d, aa, ab, ac, ad, bb, bc, bd, cc, cd, dd, aaa, aab, aac, aad, abb, abc, abd, acc, acd, add, bbb, bbc, bbd, bcc, bcd, bdd, ccc, ccd, cdd, ddd, aaaa, aaab, aaac, aaad, aabb, aabc, aabd, aacc, aacd, aadd, abbb, abbc, abbd, abcc, abcd, abdd, accc, accd, acdd, addd, bbbb, bbbc, bbbd, bbcc, bbcd, bbdd, bccc, bccd, bcdd, bddd, cccc, cccd, ccdd, cddd, dddd,
 ```
 
 ### Q.10.5.3.a
 
 Write regex for all strings of `a`'s and `b`'s such that all runs of `a`'s are of even length.
 
-- `R = (aa)*b*`
-
-<table>
-<tr>
-<th><th>ε<th>b<th>bb
-<tr>
-<th>ε<td>ε<td>b<td>bb
-<tr>
-<th>A=aa<td>A<td>Ab<td>Abb
-<tr>
-<th>AA=aaaa<td>AA<td>AAb<td>AAbb
-</table>
-
-- `R = ((aa)*b*)*`
-
-<table>
-<tr>
-<th><th>ε<th>b<th>bb<th>A<th>Ab<th>Abb<th>AA<th>AAb<th>AAbb
-<tr>
-<th>ε<td>ε<td>b<td>bb<td>A<td>Ab<td>Abb<td>AA<td>AAb<td>AAbb
-<tr>
-<th>b<td>b<td>bb<td>bbbb<td>bA<td>bAb<td>bAbb<td>bAA<td>bAAb<td>bAAbb
-<tr>
-<th>bb<td>bb<td>bbb<td>bbbb<td>bbA<td>bbAb<td>bbAbb<td>bbAA<td>bbAAb<td>bbAAbb
-<tr>
-<th>A<td>A<td>Ab<td>Abb<td>AA<td>AAb<td>AAbb<td>AAA<td>AAAb<td>AAAbb
-<tr>
-<th>Ab<td>Ab<td>Abb<td>Abbb<td>AbA<td>AbAb<td>AbAbb<td>AbAA<td>AbAAb<td>AbAAbb
-<tr>
-<th>Abb<td>Abb<td>Abbb<td>Abbbb<td>AbbA<td>AbbAb<td>AbbAbb<td>AbbAA<td>AbbAAb<td>AbbAAbb
-<tr>
-<th>AA<td>AA<td>AAb<td>AAbb<td>AAA<td>AAAb<td>AAAbb<td>AAAA<td>AAAAb<td>AAAAbb
-<tr>
-<th>AAb<td>AAb<td>AAbb<td>AAbbb<td>AAbA<td>AAbAb<td>AAbAbb<td>AAbAA<td>AAbAAb<td>AAbAAbb
-<tr>
-<th>AAbb<td>AAbb<td>AAbbb<td>AAbbbb<td>AAbbA<td>AAbbAb<td>AAbbAbb<td>AAbbAA<td>AAbbAAb<td>AAbbAAbb
-</table>
+Let a file contains five lines (the first line is empty):
 
 ```bash
-$ cat ab.txt
+$ cat Q.10.5.3.a.txt
 
 bbbaabaaaa
 aaaabb
 abbabaa
 aaa
+```
 
-$ egrep '^(((aa)*b*)*)$' ab.txt
+With the above file, L(R) should
 
+- include: `bbbaabaaaa` and `aaaabb`
+- exclude: ε, `abbabaa` and `aaa`
+
+Answer: `b*(aab*)+`
+
+| `aab*`          | `aab*aab*`
+|-----------------|------------
+| {aa, aab, aabb} | {aaaa, aaaab, aaaabb}
+|                 | {aabaa, aabaab, aabaabb}
+|                 | {aabbaa, aabbaab, aabbaabb}
+
+```bash
+$ egrep '^b*(aab*)+$' Q.10.5.3.a.txt
 bbbaabaaaa
 aaaabb
 ```
@@ -198,21 +194,21 @@ The language includes:
 Let
 
 - sign(?) := `[-+]?`
-- digits := `[0-9]*[0-9]`
+- digits := `[0-9]+`
 - digits(?) := `[0-9]*`
-- exponent := `[eE][-+]?[0-9]*[0-9]`
-- exponent(?) := `([eE][-+]?[0-9]*[0-9])?`
+- exponent := `[eE][-+]?[0-9]+`
+- exponent(?) := `([eE][-+]?[0-9]+)?`
 
 then the regex `R`
 
-- `= [-+]?[0-9]*[0-9][eE][-+]?[0-9]*[0-9]`
-- `| [-+]?[0-9]*[0-9]\.([eE][-+]?[0-9]*[0-9])?`
-- `| [-+]?[0-9]*\.[0-9]*[0-9]([eE][-+]?[0-9]*[0-9])?`
+- `= [-+]?[0-9]+[eE][-+]?[0-9]+`
+- `| [-+]?[0-9]+\.([eE][-+]?[0-9]+)?`
+- `| [-+]?[0-9]*\.[0-9]+([eE][-+]?[0-9]+)?`
 
 The regex works as shown below:
 
 ```bash
-$ cat float.txt
+$ cat Q.10.5.3.b.txt
 
 0
 1e1
@@ -223,14 +219,14 @@ $ cat float.txt
 -.2E+3
 0.2e-3
 
-$ egrep '^[-+]?[0-9]*[0-9][eE][-+]?[0-9]*[0-9]$' float.txt
+$ egrep '^[-+]?[0-9]+[eE][-+]?[0-9]+$' Q.10.5.3.b.txt
 1e1
 
-$ egrep '^[-+]?[0-9]*[0-9]\.([eE][-+]?[0-9]*[0-9])?$' float.txt
+$ egrep '^[-+]?[0-9]+\.([eE][-+]?[0-9]+)?$' Q.10.5.3.b.txt
 +1.
 -2.e0
 
-$ egrep '^[-+]?[0-9]*\.[0-9]*[0-9]([eE][-+]?[0-9]*[0-9])?$' float.txt
+$ egrep '^[-+]?[0-9]*\.[0-9]+([eE][-+]?[0-9]+)?$' Q.10.5.3.b.txt
 +.2
 -0.2
 -.2E+3
@@ -240,9 +236,10 @@ $ egrep '^[-+]?[0-9]*\.[0-9]*[0-9]([eE][-+]?[0-9]*[0-9])?$' float.txt
 For your reference, the following code compiles with C++20:
 
 ```c++
+// float_literal.cpp
 #include <type_traits> 
 
-int main()
+void float_literal()
 {
   // 0 is int
   static_assert(std::is_floating_point_v<decltype(0)> == false);
@@ -256,6 +253,5 @@ int main()
   static_assert(std::is_floating_point_v<decltype(-0.2)>);
   static_assert(std::is_floating_point_v<decltype(-.2E+3)>);
   static_assert(std::is_floating_point_v<decltype(0.2e-3)>);
-  return 0;
 }
 ```
