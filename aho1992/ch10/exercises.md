@@ -21,7 +21,11 @@ Write regex `R` for `L(R) = {=,<=,<,>=,>,!=}`.
 
 ### Q.10.5.2.b
 
-Write regex for all strings of `0`s and `1`s that end in `0`.
+Write regex R for
+- all strings of 0's and 1's that end in 0.
+
+L(¬R) can be described as
+- all strings of 0's and 1's that end in 1.
 
 For strings of 3 digits or less, L(R) should
 
@@ -46,7 +50,16 @@ $ egrep '^(0|1)*0$' Q.10.5.2.b.txt | awk '{printf "%s, ", $0}'
 
 ### Q.10.5.2.c
 
-Write regex for all strings of `0`s and `1`s with at least one `1`.
+Write regex R for
+- all strings of 0's and 1's with at least one 1.
+
+The condition for L(R) should be:
+- 1 &le; the number of 1's
+
+The condition for L(¬R) should be
+- ¬(1 &le; the number of 1's), which is equivalent to
+- the number of 1's &lt; 1, which is equivalent to
+- the number of 1's = 0
 
 For strings of 3 digits or less, L(R) should
 
@@ -72,9 +85,33 @@ $ egrep '^(0|1)*1(0|1)*$' Q.10.5.2.b.txt | awk '{printf "%s, ", $0}'
 1, 01, 10, 11, 001, 010, 011, 100, 101, 110, 111,
 ```
 
+Alternative answer: `[01]*1[01]`
+
+```bash
+$ cat  Q.10.5.2.b.txt | awk '{printf "%s, ", $0}'
+, 0, 1, 00, 01, 10, 11, 000, 001, 010, 011, 100, 101, 110, 111,
+
+S sed -n '/^[01]*1[01]*$/p' Q.10.5.2.b.txt | awk '{printf "%s, ", $0}'
+1, 01, 10, 11, 001, 010, 011, 100, 101, 110, 111,
+
+$ sed '/^0*$/d' Q.10.5.2.b.txt | awk '{printf "%s, ", $0}'
+1, 01, 10, 11, 001, 010, 011, 100, 101, 110, 111,
+
+$ sed -n '/^0*$/p' Q.10.5.2.b.txt | awk '{printf "%s, ", $0}'
+, 0, 00, 000,
+```
+
 ### Q.10.5.2.d
 
-Write regex for all strings of `0`s and `1`s with at most one `1`.
+Write regex R for
+- all strings of 0's and 1's with at most one 1.
+
+The condition for L(R) should be:
+- the number of 1's &le; 1
+
+The condition for L(¬R) should be
+- ¬(the number of 1's &le; 1), which is equivalent to
+- 1 &lt; the number of 1's
 
 For strings of 3 digits or less, L(R) should
 
